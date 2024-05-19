@@ -98,4 +98,15 @@ class ProductRepository
             ->paginate(12);
         return ProductResource::collection($products);
     }
+
+    public static function searchProduct($search)
+    {
+        $product = Product::query()
+            ->where('title','like','%'.$search.'%')
+            ->orWhere('title_en','like','%'.$search.'%')
+            ->orWhere('description','like','%'.$search.'%')
+            ->paginate(12);
+
+        return ProductResource::collection($product);
+    }
 }

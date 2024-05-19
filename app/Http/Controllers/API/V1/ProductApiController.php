@@ -7,9 +7,10 @@ use App\Http\Repositories\ProductRepository;
 use App\Http\Resources\ProductResource;
 use App\Http\Services\Keys;
 use App\Models\Brand;
-use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 
 class ProductApiController extends Controller
@@ -244,6 +245,103 @@ class ProductApiController extends Controller
             ]
 
         ],200);
+    }
+
+    /**
+     * @OA\Post(
+     ** path="/api/v1/save_product_comment",
+     *  tags={"Product Details"},
+     *   security={{"sanctum":{}}},
+     *  description="save user comment for product",
+     * @OA\RequestBody(
+     *    required=true,
+     *         @OA\MediaType(
+     *           mediaType="multipart/form-data",
+     *           @OA\Schema(
+     *           @OA\Property(
+     *                  property="product_id",
+     *                  description="product id",
+     *                  type="integer",
+     *               ),
+     *     *           @OA\Property(
+     *                  property="parent_id",
+     *                  description="product id",
+     *                  type="integer",
+     *               ),
+     *          @OA\Property(
+     *                  property="body",
+     *                  description="user comment text",
+     *                  type="string",
+     *               ),
+     *           ),
+     *       )
+     * ),
+     *   @OA\Response(
+     *      response=200,
+     *      description="Data saved",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   )
+     *)
+     **/
+    public function saveComment(Request $request): JsonResponse
+    {
+        $user = auth()->user();
+        $comment = Comment::query()->create([
+            'body'=>$request->input('body'),
+            'parent_id'=>$request->input('parent_id', null),
+            'user_id'=>$user->id,
+            'product_id'=>$request->input('product_id'),
+        ]);
+        $product = Product::query()->find($request->input('product_id'));
+
+        return response()->json([
+            'result'=>true,
+            'message'=>'application products page',
+            'data'=>[
+                new ProductResource($product)
+            ]
+
+        ],200);
+    }
+
+    /**
+     * @OA\Post(
+     ** path="/api/v1/search_product",
+     *  tags={"Products Page"},
+     *  description="search product",
+     *    @OA\RequestBody(
+     *    required=true,
+     *          @OA\MediaType(
+     *           mediaType="multipart/form-data",
+     *           @OA\Schema(
+     *           @OA\Property(
+     *                  property="search",
+     *                  type="string",
+     *               ),
+     *     )
+     *   )
+     * ),
+     *   @OA\Response(
+     *      response=200,
+     *      description="Its Ok",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   )
+     *)
+     **/
+    public function searchProduct(Request $request): JsonResponse
+    {
+        return Response()->json([
+            'result'=>true,
+            'message'=>'application products page',
+            'data'=>[
+                Keys::brands=> Brand::getAllBrands(),
+                Keys::search_products=> ProductRepository::searchProduct($request->input('search'))->response()->getData(true),
+            ]
+        ], 200);
     }
 
 }
