@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthApiController;
+use App\Http\Controllers\Api\V1\HomeApiController;
+use App\Http\Controllers\API\V1\ProductApiController;
+use App\Http\Controllers\Api\V1\UserApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +23,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::prefix('/v1')->namespace('Api\V1')->group(function (){
-    Route::post('send_sms', [\App\Http\Controllers\Api\V1\AuthApiController::class, 'sendSms']);
-    Route::post('verify_sms_code', [\App\Http\Controllers\Api\V1\AuthApiController::class, 'verifySms']);
+    Route::post('send_sms', [AuthApiController::class, 'sendSms']);
+    Route::post('verify_sms_code', [AuthApiController::class, 'verifySms']);
+    Route::get('home', [HomeApiController::class, 'home']);
+    Route::get('most_sold_products', [ProductApiController::class, 'mostSold']);
+    Route::get('most_viewed_products', [ProductApiController::class, 'most_viewed_products']);
+    Route::get('newest_products', [ProductApiController::class, 'newest_products']);
+    Route::get('cheapest_products', [ProductApiController::class, 'cheapest_products']);
+    Route::get('most_expensive_products', [ProductApiController::class, 'most_expensive_products']);
+    Route::get('products_by_category/{id}', [ProductApiController::class, 'productsByCategory']);
+    Route::get('products_by_brand{id}', [ProductApiController::class, 'productsByBrand']);
 });
 
-Route::prefix('/v1')->namespace('Api\V1')->middleware('auth:sanctum',)->group(function (){
-    Route::post('/register', [\App\Http\Controllers\Api\V1\UserApiController::class, 'register']);
+Route::prefix('/v1')->namespace('Api\V1')->middleware('auth:sanctum')->group(function (){
+    Route::post('/register', [UserApiController::class, 'register']);
 });
