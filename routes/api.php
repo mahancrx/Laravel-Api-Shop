@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthApiController;
 use App\Http\Controllers\Api\V1\HomeApiController;
+use App\Http\Controllers\Api\V1\PaymentApiController;
 use App\Http\Controllers\API\V1\ProductApiController;
 use App\Http\Controllers\Api\V1\UserApiController;
 use Illuminate\Http\Request;
@@ -35,9 +36,11 @@ Route::prefix('/v1')->namespace('Api\V1')->group(function (){
     Route::get('products_by_brand{id}', [ProductApiController::class, 'productsByBrand']);
     Route::get('product_details/{id}', [ProductApiController::class, 'productDetail']);
     Route::post('search_product', [ProductApiController::class, 'searchProduct']);
+    Route::get('callback', [PaymentApiController::class, 'callback']);
 });
 
 Route::prefix('/v1')->namespace('Api\V1')->middleware('auth:sanctum')->group(function (){
     Route::post('/register', [UserApiController::class, 'register']);
     Route::post('/save_product_comment', [ProductApiController::class, 'saveComment']);
+    Route::post('/payment', [PaymentApiController::class, 'payment'])->name('payment');
 });
