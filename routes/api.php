@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\V1\AuthApiController;
-use App\Http\Controllers\Api\V1\HomeApiController;
-use App\Http\Controllers\Api\V1\PaymentApiController;
+use App\Http\Controllers\API\V1\AuthApiController;
+use App\Http\Controllers\API\V1\HomeApiController;
+use App\Http\Controllers\API\V1\PaymentApiController;
 use App\Http\Controllers\API\V1\ProductApiController;
-use App\Http\Controllers\Api\V1\UserApiController;
+use App\Http\Controllers\API\V1\UserApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,7 +36,7 @@ Route::prefix('/v1')->namespace('Api\V1')->group(function (){
     Route::get('products_by_brand{id}', [ProductApiController::class, 'productsByBrand']);
     Route::get('product_details/{id}', [ProductApiController::class, 'productDetail']);
     Route::post('search_product', [ProductApiController::class, 'searchProduct']);
-    Route::get('callback', [PaymentApiController::class, 'callback']);
+    Route::get('/payment/callback', [PaymentApiController::class, 'callback']);
 });
 
 Route::prefix('/v1')->namespace('Api\V1')->middleware('auth:sanctum')->group(function (){
